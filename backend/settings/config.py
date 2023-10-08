@@ -12,7 +12,8 @@ from pydantic import AnyHttpUrl, EmailStr, PostgresDsn, RedisDsn
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = ".env"
 ENV_PATH = os.path.join(BASE_DIR, ENV_FILE)
-
+SQLITE_DB_URL = "sqlite:///./sql_app.db"
+LOGGING_CONFIG_FILE = os.path.join(BASE_DIR, 'logging.ini')
 
 class Settings(BaseSettings):
     # API Settings
@@ -25,7 +26,8 @@ class Settings(BaseSettings):
     version: str = "0.1.0"
     # Custom settings
     disable_docs: bool = False
-    api_str: str = "api/v1"
+    port: int = 8000
+    api_str: str = "/api/v1"
     secret_key: str = secrets.token_urlsafe(32)
     server_domain: AnyHttpUrl = "http://127.0.0.1:8000"
     accept_cors_origins: List[AnyHttpUrl] = ["http://localhost:3000", "http://127.0.0.1:3000"]
