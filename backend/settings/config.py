@@ -15,6 +15,7 @@ ENV_PATH = os.path.join(BASE_DIR, ENV_FILE)
 SQLITE_DB_URL = "sqlite:///./sql_app.db"
 LOGGING_CONFIG_FILE = os.path.join(BASE_DIR, 'logging.ini')
 
+
 class Settings(BaseSettings):
     # API Settings
     debug: bool = False
@@ -31,6 +32,10 @@ class Settings(BaseSettings):
     secret_key: str = secrets.token_urlsafe(32)
     server_domain: AnyHttpUrl = "http://127.0.0.1:8000"
     accept_cors_origins: List[AnyHttpUrl] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+    # JWT configure
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_min: int = 30
 
     # celery configure
     celery_broker_url: RedisDsn = "redis://localhost:6379"
