@@ -1,7 +1,7 @@
 # Read more here:
 # https://fastapi.tiangolo.com/tutorial/sql-databases/#main-fastapi-app
 
-import logging
+from logging import getLogger
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -15,7 +15,7 @@ from app.user.schemas import UserItemResponse, UserCreateRequest, UserUpdateMeRe
 from app.user.services import UserService
 from app.user.models import User
 
-logger = logging.getLogger()
+logger = getLogger(__name__)
 router = APIRouter()
 
 

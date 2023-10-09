@@ -1,5 +1,4 @@
 from typing import Optional, TypeVar, Generic
-from pydantic.generics import GenericModel
 
 from pydantic import BaseModel
 
@@ -23,7 +22,7 @@ class ResponseSchemaBase(BaseModel):
         return self
 
 
-class DataResponse(ResponseSchemaBase, GenericModel, Generic[T]):
+class DataResponse(ResponseSchemaBase, Generic[T]):
     data: Optional[T] = None
 
     class Config:

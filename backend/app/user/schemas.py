@@ -1,10 +1,12 @@
-import enum
+from enum import Enum
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+
+from email_validator import EmailNotValidError
+from pydantic import BaseModel, EmailStr, field_validator, validate_email
 
 
-class UserRole(enum.Enum):
+class UserRole(Enum):
     ADMIN = 'admin'
     GUEST = 'guest'
 
@@ -18,8 +20,14 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
 
-    class Config:
-        orm_mode = True
+    @classmethod
+    @field_validator('email')
+    def val_email(cls, email: EmailStr) -> EmailStr:
+        try:
+            validate_email(email)
+        except EmailNotValidError:
+            raise ValueError("Invalid email format")
+        return email
 
 
 # Properties to receive via API on creation

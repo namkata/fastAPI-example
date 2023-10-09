@@ -5,7 +5,6 @@ from typing import Optional, Generic, Sequence, Type, TypeVar
 
 from sqlalchemy import asc, desc
 from sqlalchemy.orm import Query
-from pydantic.generics import GenericModel
 from contextvars import ContextVar
 
 from app.api.sche_base import ResponseSchemaBase, MetadataSchema
@@ -24,7 +23,7 @@ class PaginationParams(BaseModel):
     order: Optional[str] = 'desc'
 
 
-class BasePage(ResponseSchemaBase, GenericModel, Generic[T], ABC):
+class BasePage(ResponseSchemaBase, Generic[T], ABC):
     data: Sequence[T]
 
     class Config:

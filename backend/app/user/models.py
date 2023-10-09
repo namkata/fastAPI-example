@@ -12,3 +12,9 @@ class User(BareBaseModel):
     is_active = Column(Boolean, default=True)
     role = Column(String, default='guest')
     last_login = Column(DateTime)
+
+    class PydanticMeta:
+        exclude = ["hashed_password"]
+
+    def __str__(self):
+        return f"User: {self.full_name}"
