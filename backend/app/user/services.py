@@ -1,13 +1,14 @@
 # Read more here: https://fastapi.tiangolo.com/tutorial/sql-databases/#crud-utils
-import jwt
+from jose import JWTError, jwt
 
 from typing import Optional
 from fastapi import Depends, HTTPException
-from fastapi.security import HTTPBearer
+from fastapi.security import OAuth2PasswordBearer
 from fastapi_sqlalchemy import db
 from pydantic import ValidationError
 from starlette import status
 
+from app.api.sche_base import DataResponse
 from app.user.models import User
 from settings.config import settings
 from core.utils.common import verify_password, get_password_hash
@@ -19,9 +20,7 @@ from app.user.schemas import (
 class UserService(object):
     __instance = None
 
-    reusable_oauth2 = HTTPBearer(
-        scheme_name='Authorization'
-    )
+    oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.api_str}/auth/sign-in")
 
     @staticmethod
     def authenticate(*, email: str, password: str) -> Optional[User]:
@@ -37,24 +36,29 @@ class UserService(object):
         return user
 
     @staticmethod
-    def get_current_user(http_authorization_credentials=Depends(reusable_oauth2)) -> User:
+    def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         """
         Decode JWT token to get user_id => return User info from DB query
         """
         try:
             payload = jwt.decode(
-                http_authorization_credentials.credentials, settings.SECRET_KEY,
-                algorithms=[settings.SECURITY_ALGORITHM]
+                token, settings.secret_key,
+                algorithms=[settings.jwt_algorithm]
             )
-            token_data = TokenPayload(**payload)
-        except(jwt.PyJWTError, ValidationError):
+
+            username: str = payload.get("sub")
+        except(JWTError, ValidationError):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Could not validate credentials",
+                detail="Mã bảo mật có thể không đúng, hệ thống không thể xử lý lúc này, vui lòng thử lại sau!",
             )
-        user = db.session.query(User).get(token_data.user_id)
+        user = db.session.query(User).filter_by(email=username).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Không thể tìm thấy mã bảo mật này cho bất kì "
+                       "người dùng nào, chúng tôi sẽ thông báo bạn sau, xin cảm ơn!",
+            )
         return user
 
     @staticmethod

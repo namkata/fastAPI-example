@@ -12,5 +12,4 @@ celery.conf.result_backend = settings.celery_result_backend
 @celery.task(name="create_task")
 def create_task(task_type):
     time.sleep(10)
-    print(task_type)
     return True
