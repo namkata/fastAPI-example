@@ -8,6 +8,7 @@ from app.user.services import UserService
 from fastapi import status, HTTPException
 
 from core.utils.security import create_access_token
+# Read more: https://fastapi.tiangolo.com/ja/advanced/security/oauth2-scopes/
 
 router = APIRouter()
 
