@@ -38,12 +38,9 @@ def login_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    print(form_data.username)
-    print(form_data.password)
     user = crud.user.authenticate(
         email=form_data.username, password=form_data.password
     )
-    print(user)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
