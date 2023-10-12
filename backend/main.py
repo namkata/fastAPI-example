@@ -2,12 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from logging.config import fileConfig
-from core.exceptions.handlers import CustomException, http_exception_handler
-from settings.config import settings, get_settings, LOGGING_CONFIG_FILE, SQLITE_DB_URL
+# from core.exceptions.handlers import CustomException, http_exception_handler
+from core.config import settings, get_settings, LOGGING_CONFIG_FILE, SQLITE_DB_URL
 from fastapi_sqlalchemy import DBSessionMiddleware
-from app.api.models import Base
-from core.db.base import engine
-from app.api.routers import api_router
+from db.base_class import Base
+from db.session import engine
+from api.router import router
 
 # Configure logging
 fileConfig(LOGGING_CONFIG_FILE, disable_existing_loggers=False)
@@ -26,8 +26,8 @@ def get_app() -> FastAPI:
     )
     my_app.add_middleware(DBSessionMiddleware, db_url=settings.database_url or SQLITE_DB_URL)
     # Include endpoint routes here:
-    my_app.include_router(api_router, prefix=settings.api_str)
-    my_app.add_exception_handler(CustomException, http_exception_handler)
+    my_app.include_router(router, prefix=settings.api_str)
+    # my_app.add_exception_handler(CustomException, http_exception_handler)
     return my_app
 
 
